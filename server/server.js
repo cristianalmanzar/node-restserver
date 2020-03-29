@@ -1,42 +1,22 @@
 require('./config/config');
+require('./routes/user');
 const express = require('express');
-const request = require('body-parser');
+const mongoose = require('mongoose');
 const app = express();
 
-app.use(request.urlencoded({ extended: false }))
+app.use( require('./routes/user'))
 
-app.use(request.json())
  
-app.get('/users', function (req, res) {
-  res.json('get user')
-})
 
-app.post('/users', function (req, res) {
-    let body = req.body
-    if(body.name === undefined ) {
-        res.status(400).json({
-            ok: false,
-            message: 'Name is required'
-        })
-    } else {
-
-        res.json({
-            data: body
-        })
-    }
-})
-
-app.put('/users/:id', function (req, res) {
-    let id = req.params.id;
-})
-
-app.delete('/users', function (req, res) {
-    res.json('delete user')
-})
-
-
+mongoose.connect('mongodb://localhost:27017/coffe', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}, (err,res) => {
+    if(err) throw err;
+    console.log("Database connected")
+});
 
  
 app.listen(process.env.PORT, () => {
-    console.log('Escuchando puerto', process.env.PORT);
+    console.log('Listening PORT', process.env.PORT);
 })
