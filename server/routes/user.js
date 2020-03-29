@@ -2,6 +2,7 @@ const express = require('express');
 const request = require('body-parser');
 
 const bcrypt = require('bcrypt');
+const _ = require('underscore');
 
 const User = require('../models/user');
 
@@ -42,6 +43,22 @@ app.post('/users', function (req, res) {
   
 app.put('/users/:id', function (req, res) {
     let id = req.params.id;
+    let body = _.pick(req.body,['name','email','img','role','status']);
+
+    User.findByIdAndUpdate( id, body, {new: true, runValidators: true}, (err, userDB) => {
+        if( err ) {
+            return res.status(400).json({
+                ok: false,
+                err
+            })
+        }
+
+        res.json({
+            ok: true,
+            user: userDB
+        })
+    })
+
 })
 
 app.delete('/users', function (req, res) {
