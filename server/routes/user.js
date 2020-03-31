@@ -12,9 +12,13 @@ app.use(request.urlencoded({ extended: false }))
 app.use(request.json())
 
 app.get('/users', function (req, res) {
+
+    let from = Number(req.query.from) || 5;
+    let limit = Number(req.query.to) || 10;
+
     User.find({})
-        .skip(5)
-        .limit(5)
+        .skip(from)
+        .limit(limit)
         .exec( (err, users) => {
             if(err){
                 return res.status(400).json({
@@ -23,9 +27,12 @@ app.get('/users', function (req, res) {
                 });
             }
 
-            res.json({
-                ok: true,
-                users
+            User.count({}, (err,count) =>{
+                res.json({
+                    ok: true,
+                    users,
+                    count
+                })
             })
         });
 })
@@ -76,8 +83,22 @@ app.put('/users/:id', function (req, res) {
 
 })
 
-app.delete('/users', function (req, res) {
-    res.json('delete user')
+app.delete('/users/:id', function (req, res) {
+    let id = req.params.id;
+    User.findByIdAndRemove(id, (err, userDeleted) => {
+        if(err)
+        {
+            return res.status(400).json({
+                ok: false,
+                err
+            })
+        }
+
+        res.json({
+            ok: true,
+            user: userDeleted
+        })
+    });
 })
 
 module.exports = app;
