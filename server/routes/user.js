@@ -12,7 +12,22 @@ app.use(request.urlencoded({ extended: false }))
 app.use(request.json())
 
 app.get('/users', function (req, res) {
-    res.json('get user')
+    User.find({})
+        .skip(5)
+        .limit(5)
+        .exec( (err, users) => {
+            if(err){
+                return res.status(400).json({
+                    ok: false,
+                    err
+                });
+            }
+
+            res.json({
+                ok: true,
+                users
+            })
+        });
 })
   
 app.post('/users', function (req, res) {
