@@ -1,5 +1,5 @@
 const express = require('express');
-const request = require('body-parser');
+
 
 const bcrypt = require('bcrypt');
 const _ = require('underscore');
@@ -8,15 +8,12 @@ const User = require('../models/user');
 
 const app = express();
 
-app.use(request.urlencoded({ extended: false }))
-app.use(request.json())
-
 app.get('/users', function (req, res) {
 
-    let from = Number(req.query.from) || 5;
+    let from = Number(req.query.from) || 0;
     let limit = Number(req.query.to) || 10;
 
-    User.find({})
+    User.find({ status: true })
         .skip(from)
         .limit(limit)
         .exec( (err, users) => {
@@ -27,7 +24,7 @@ app.get('/users', function (req, res) {
                 });
             }
 
-            User.count({}, (err,count) =>{
+            User.count({ status: true }, (err,count) =>{
                 res.json({
                     ok: true,
                     users,
@@ -85,20 +82,42 @@ app.put('/users/:id', function (req, res) {
 
 app.delete('/users/:id', function (req, res) {
     let id = req.params.id;
-    User.findByIdAndRemove(id, (err, userDeleted) => {
-        if(err)
-        {
-            return res.status(400).json({
+
+    User.findByIdAndUpdate(id, {status: false}, {new: true, runValidators: true}, (err, userDB) => {
+        if(err){
+            res.status(400).json({
                 ok: false,
                 err
-            })
+            });
         }
 
         res.json({
             ok: true,
-            user: userDeleted
-        })
-    });
+            user: userDB
+        });
+    })
+    // User.findByIdAndRemove(id, (err, userDeleted) => {
+
+    //     if (!userDeleted){
+    //         return res.status(400).json({
+    //             ok: false,
+    //             err: 'User does not exists'
+    //         })
+    //     }
+        
+    //     if(err)
+    //     {
+    //         return res.status(400).json({
+    //             ok: false,
+    //             err
+    //         })
+    //     }
+
+    //     res.json({
+    //         ok: true,
+    //         user: userDeleted
+    //     })
+    // });
 })
 
 module.exports = app;
