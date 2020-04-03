@@ -1,16 +1,12 @@
 require('./config/config');
-require('./routes/user');
 const express = require('express');
 const mongoose = require('mongoose');
-const request = require('body-parser');
 const app = express();
 
 // Route Config
-app.use( require('./routes/index'))
+app.use( require('./routes/route'))
 
-// Body Parser
-app.use(request.urlencoded({ extended: false }))
-app.use(request.json())
+
  
 // Database Connection
 mongoose.connect('mongodb://localhost:27017/coffe', {
