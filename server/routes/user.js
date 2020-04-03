@@ -5,12 +5,15 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 
 const User = require('../models/user');
+const { verifyToken } = require('../middleware/authentication')
 
 const app = express();
 
 
 
-app.get('/users', function (req, res) {
+app.get('/users', verifyToken, (req, res) => {
+
+ 
 
     let from = Number(req.query.from) || 0;
     let limit = Number(req.query.to) || 10;
@@ -36,7 +39,7 @@ app.get('/users', function (req, res) {
         });
 })
   
-app.post('/users', function (req, res) {
+app.post('/users', verifyToken,  (req, res) => {
     let body = req.body
 
     let user = new User({
@@ -62,7 +65,7 @@ app.post('/users', function (req, res) {
     })
 })
   
-app.put('/users/:id', function (req, res) {
+app.put('/users/:id', verifyToken, (req, res) => {
     let id = req.params.id;
     let body = _.pick(req.body,['name','email','img','role','status']);
 
@@ -82,7 +85,7 @@ app.put('/users/:id', function (req, res) {
 
 })
 
-app.delete('/users/:id', function (req, res) {
+app.delete('/users/:id', verifyToken , (req, res) => {
     let id = req.params.id;
 
     User.findByIdAndUpdate(id, {status: false}, {new: true, runValidators: true}, (err, userDB) => {

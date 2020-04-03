@@ -38,7 +38,7 @@ app.post('/login',(req, res) => {
         }
 
         let token = jwt.sign({
-                        usuario: userDB
+                        user: userDB
                     }, process.env.SEED, { expiresIn: process.env.TOKEN_EXPIRATION });
 
         res.json({
