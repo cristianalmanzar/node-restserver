@@ -8,7 +8,7 @@ const app = express();
 app.post('/login',(req, res) => {
 
     let body = req.body;
-
+    // Verify if the request data exist
     User.findOne({ email:body.email}, (err, userDB) => {
 
         if( err )
@@ -27,7 +27,7 @@ app.post('/login',(req, res) => {
                 }
             })
         }
-
+        // One way crypt password
         if( !bcrypt.compareSync(body.password, userDB.password)) {
             return res.status(400).json({
                 ok: false,
@@ -36,7 +36,7 @@ app.post('/login',(req, res) => {
                 }
             })
         }
-
+        // Assing Token
         let token = jwt.sign({
                         user: userDB
                     }, process.env.SEED, { expiresIn: process.env.TOKEN_EXPIRATION });
@@ -49,11 +49,5 @@ app.post('/login',(req, res) => {
 
     })
 });
-
-
-
-
-
-
 
 module.exports = app;

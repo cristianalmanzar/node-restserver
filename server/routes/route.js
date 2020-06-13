@@ -9,6 +9,7 @@ app.use(request.json())
 
 app.use( require('./user'))
 app.use( require('./login'))
+app.use( require('./category'))
 
 
 

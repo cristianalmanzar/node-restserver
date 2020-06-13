@@ -9,11 +9,7 @@ const { verifyToken } = require('../middleware/authentication')
 
 const app = express();
 
-
-
 app.get('/users', verifyToken, (req, res) => {
-
- 
 
     let from = Number(req.query.from) || 0;
     let limit = Number(req.query.to) || 10;
@@ -39,7 +35,7 @@ app.get('/users', verifyToken, (req, res) => {
         });
 })
   
-app.post('/users', verifyToken,  (req, res) => {
+app.post('/users',  (req, res) => {
     let body = req.body
 
     let user = new User({

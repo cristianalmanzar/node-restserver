@@ -21,11 +21,7 @@ let verifyToken = ( req, res, next ) => {
     // res.json({
     //     token
     // })
-
-
 }
-
-
 
 
 module.exports =  {
