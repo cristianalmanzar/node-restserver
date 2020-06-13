@@ -11,8 +11,10 @@ app.get('/categories', verifyToken, (req, res) => {
     let limit = Number(req.query.to) || 10;
 
     Category.find()
+            .sort('description')
             .skip(from)
             .limit(limit)
+            .populate('user', 'name, email')
             .exec( (err, categories) => {
                 if(err)
                 {
@@ -129,7 +131,7 @@ app.put('/category/:id', verifyToken, (req, res) => {
 app.delete('/categories/:id', verifyToken, (req, res) => {
     let id = req.params.id;
 
-    Category.deleteOne(id, (err, category) => {
+    Category.findByIdAndDelete(id, (err, category) => {
         if(err){
             return res.status(500).json({
                 ok: false,
@@ -140,13 +142,12 @@ app.delete('/categories/:id', verifyToken, (req, res) => {
         if(!category) {
             return res.status(400).json({
                 ok: false,
-                err
+                err: "ID does not exist"
             })
         }
 
         res.json({
             ok: true,
-            category,
             message: "Category is deleted"
         })
     });
